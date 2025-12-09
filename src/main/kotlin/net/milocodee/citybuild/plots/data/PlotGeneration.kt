@@ -13,8 +13,8 @@ object PlotGeneration {
         val world = Bukkit.getWorld("plots")
         if (world == null) return
 
-        val baseX = plot.x * (PLOT_SIZE + 5)
-        val baseZ = plot.z * (PLOT_SIZE + 5)
+        val baseX = plot.gridX * (PLOT_SIZE + 5)
+        val baseZ = plot.gridZ * (PLOT_SIZE + 5)
 
         for (x in 0..<PLOT_SIZE) {
             for (z in 0..<PLOT_SIZE) {
@@ -35,8 +35,8 @@ object PlotGeneration {
 
     fun getPlotSpawn(plot: PlotData): Location {
         val world = Bukkit.getWorld("plots")
-        val baseX = plot.x * (PLOT_SIZE + 5)
-        val baseZ = plot.z * (PLOT_SIZE + 5)
+        val baseX = plot.gridX * (PLOT_SIZE + 5)
+        val baseZ = plot.gridZ * (PLOT_SIZE + 5)
         return Location(
             world,
             (baseX + PLOT_SIZE / 2).toDouble(),
