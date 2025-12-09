@@ -1,4 +1,4 @@
-package net.milocodee.citybuild.economy
+package net.milocodee.citybuild.economy.data
 
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File

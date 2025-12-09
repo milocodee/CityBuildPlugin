@@ -1,4 +1,4 @@
-package net.milocodee.citybuild.economy
+package net.milocodee.citybuild.economy.data
 
 data class EconomyPlayerData(
     val uuid: String,
