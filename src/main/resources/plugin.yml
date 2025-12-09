@@ -1,0 +1,9 @@
+name: CityBuildPlugin
+version: '1.0-SNAPSHOT'
+main: net.milocodee.citybuild.CityBuildMain
+api-version: '1.21'
+commands:
+  balance:
+    description: Shows your balance
+  pay:
+    description: Pay money to other players.
