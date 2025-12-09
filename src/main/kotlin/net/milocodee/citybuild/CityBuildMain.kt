@@ -1,13 +1,21 @@
 package net.milocodee.citybuild
 
+import net.milocodee.citybuild.commands.FarmweltCommand
+import net.milocodee.citybuild.commands.PlotweltCommand
+import net.milocodee.citybuild.commands.JobCommand
+import net.milocodee.citybuild.jobs.JobManager
+import net.milocodee.citybuild.plots.PlotManager
+import net.milocodee.citybuild.farm.FarmDayTask
+import net.milocodee.citybuild.farm.FarmListener
 import net.milocodee.citybuild.economy.EconomyMain
 import net.milocodee.citybuild.economy.commands.BalanceCommand
 import net.milocodee.citybuild.economy.commands.PayCommand
 import net.milocodee.citybuild.economy.data.EconomyStorage
-import net.milocodee.citybuild.plots.PlotManager
 import net.milocodee.citybuild.listeners.JoinListener
 import org.bukkit.Bukkit
+import org.bukkit.World
 import org.bukkit.WorldCreator
+import org.bukkit.WorldType
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -23,28 +31,59 @@ class CityBuildMain : JavaPlugin(), Listener {
     lateinit var plotManager: PlotManager
         private set
 
+    lateinit var jobManager: JobManager
+        private set
+
+    lateinit var farmWorld: World
+        private set
+
+    lateinit var plotWorld: World
+        private set
+
     override fun onEnable() {
-            val economyFolder = File(dataFolder, "economy")
-            if (!economyFolder.exists()) economyFolder.mkdirs()
+        // Economy setup
+        val economyFolder = File(dataFolder, "economy")
+        if (!economyFolder.exists()) economyFolder.mkdirs()
+        val storage = EconomyStorage(economyFolder)
+        economy = EconomyMain(storage)
 
-            val storage = EconomyStorage(economyFolder)
-            economy = EconomyMain(storage)
+        // Plot setup
+        val plotsFolder = File(dataFolder, "plots")
+        if (!plotsFolder.exists()) plotsFolder.mkdirs()
+        plotManager = PlotManager(this, plotsFolder)
 
-            val plotFolder = File(dataFolder, "plots")
-            if (!plotFolder.exists()) plotFolder.mkdirs()
+        // Plot world
+        plotWorld = Bukkit.getWorld("plots") ?: WorldCreator("plots")
+            .environment(org.bukkit.World.Environment.NORMAL)
+            .type(WorldType.FLAT)
+            .createWorld()!!
 
-            plotManager = PlotManager(this, plotFolder)
+        // Farm world
+        farmWorld = Bukkit.getWorld("farmwelt") ?: run {
+            logger.info("Erstelle Farmwelt (normal)...")
+            WorldCreator("farmwelt")
+                .environment(org.bukkit.World.Environment.NORMAL)
+                .type(WorldType.NORMAL)
+                .createWorld()!!
+        }
 
-            if (Bukkit.getWorld("plots") == null) {
-                Bukkit.createWorld(WorldCreator("plots"))
-            }
+        // Job manager
+        jobManager = JobManager()
 
-            server.pluginManager.registerEvents(this, this)
-            server.pluginManager.registerEvents(JoinListener(plotManager), this)
+        // Event listeners
+        server.pluginManager.registerEvents(this, this)
+        server.pluginManager.registerEvents(JoinListener(plotManager), this) // <-- FIXED
+        server.pluginManager.registerEvents(FarmListener(this), this)
 
-            getCommand("balance")?.setExecutor(BalanceCommand(this))
-            getCommand("pay")?.setExecutor(PayCommand(this))
+        // Farm day task
+        FarmDayTask(this).runTaskTimer(this, 0L, 20L) // adjust timing if needed
 
+        // Commands
+        getCommand("balance")?.setExecutor(BalanceCommand(this))
+        getCommand("pay")?.setExecutor(PayCommand(this))
+        getCommand("farmwelt")?.setExecutor(FarmweltCommand(this))
+        getCommand("plotwelt")?.setExecutor(PlotweltCommand(this))
+        getCommand("job")?.setExecutor(JobCommand(this))
     }
 
     @EventHandler

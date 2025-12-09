@@ -7,3 +7,9 @@ commands:
     description: Shows your balance
   pay:
     description: Pay money to other players.
+  farmwelt:
+    description: Teleport zu der Farmwelt.
+  plotwelt:
+    description: Teleport zur Plotwelt.
+  job:
+    description: Setze deinen Job.
