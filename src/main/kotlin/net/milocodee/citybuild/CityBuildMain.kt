@@ -24,26 +24,27 @@ class CityBuildMain : JavaPlugin(), Listener {
         private set
 
     override fun onEnable() {
-        val economyFolder = File(dataFolder, "economy")
-        if (!economyFolder.exists()) economyFolder.mkdirs()
+            val economyFolder = File(dataFolder, "economy")
+            if (!economyFolder.exists()) economyFolder.mkdirs()
 
-        val storage = EconomyStorage(economyFolder)
-        economy = EconomyMain(storage)
+            val storage = EconomyStorage(economyFolder)
+            economy = EconomyMain(storage)
 
-        val plotFolder = File(dataFolder, "plots")
-        if (!plotFolder.exists()) plotFolder.mkdirs()
+            val plotFolder = File(dataFolder, "plots")
+            if (!plotFolder.exists()) plotFolder.mkdirs()
 
-        plotManager = PlotManager(this, plotFolder)
+            plotManager = PlotManager(this, plotFolder)
 
-        if (Bukkit.getWorld("plots") == null) {
-            Bukkit.createWorld(WorldCreator("plots"))
-        }
+            if (Bukkit.getWorld("plots") == null) {
+                Bukkit.createWorld(WorldCreator("plots"))
+            }
 
-        server.pluginManager.registerEvents(this, this)
-        server.pluginManager.registerEvents(JoinListener(this), this)
+            server.pluginManager.registerEvents(this, this)
+            server.pluginManager.registerEvents(JoinListener(plotManager), this)
 
-        getCommand("balance")?.setExecutor(BalanceCommand(this))
-        getCommand("pay")?.setExecutor(PayCommand(this))
+            getCommand("balance")?.setExecutor(BalanceCommand(this))
+            getCommand("pay")?.setExecutor(PayCommand(this))
+
     }
 
     @EventHandler
