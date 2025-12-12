@@ -3,6 +3,7 @@ package net.milocodee.citybuild
 import net.milocodee.citybuild.commands.FarmweltCommand
 import net.milocodee.citybuild.commands.PlotweltCommand
 import net.milocodee.citybuild.commands.JobCommand
+import net.milocodee.citybuild.commands.LobbyCommand
 import net.milocodee.citybuild.jobs.JobManager
 import net.milocodee.citybuild.plots.PlotManager
 import net.milocodee.citybuild.farm.FarmDayTask
@@ -40,6 +41,9 @@ class CityBuildMain : JavaPlugin(), Listener {
     lateinit var plotWorld: World
         private set
 
+    lateinit var lobby: World
+        private set
+
     override fun onEnable() {
         // Economy setup
         val economyFolder = File(dataFolder, "economy")
@@ -67,6 +71,14 @@ class CityBuildMain : JavaPlugin(), Listener {
                 .createWorld()!!
         }
 
+        // Lobby
+        lobby = Bukkit.getWorld("lobby") ?: run {
+            WorldCreator("lobby")
+                .environment(org.bukkit.World.Environment.NORMAL)
+                .type(WorldType.FLAT)
+                .createWorld()!!
+        }
+
         // Job manager
         jobManager = JobManager()
 
@@ -84,6 +96,7 @@ class CityBuildMain : JavaPlugin(), Listener {
         getCommand("farmwelt")?.setExecutor(FarmweltCommand(this))
         getCommand("plotwelt")?.setExecutor(PlotweltCommand(this))
         getCommand("job")?.setExecutor(JobCommand(this))
+        getCommand("lobby")?.setExecutor(LobbyCommand(this))
     }
 
     @EventHandler
