@@ -21,12 +21,12 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.21.10")
+        minecraftVersion("1.21")
     }
 }
 
 
-val targetJavaVersion = 24
+val targetJavaVersion = 22
 kotlin {
     jvmToolchain(targetJavaVersion)
 }
