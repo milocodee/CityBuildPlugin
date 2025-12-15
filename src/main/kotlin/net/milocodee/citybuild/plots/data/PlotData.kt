@@ -6,8 +6,15 @@ import java.io.File
 class PlotData(
     val gridX: Int,
     val gridZ: Int,
-    var name: String?
+    var name: String? = null
 ) {
+
+    init {
+        // fallback
+        if (name.isNullOrBlank()) {
+            name = "plot_${gridX}_${gridZ}"
+        }
+    }
 
     fun saveToFile(file: File) {
         if (!file.exists()) {
@@ -32,7 +39,11 @@ class PlotData(
             val gridX = config.getInt("gridX")
             val gridZ = config.getInt("gridZ")
 
-            return PlotData(gridX, gridZ, name)
+            return PlotData(
+                gridX = gridX,
+                gridZ = gridZ,
+                name = name
+            )
         }
     }
 }
